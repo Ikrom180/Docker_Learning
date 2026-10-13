@@ -2,26 +2,42 @@ Get image and run it -> it called run the container
 Docker image : Immutable Template taht defines how a container will be relized
 Docker container : running instance of an image
 
-Docker pull hello-world -> get the image from docker 
+docker run ngnix -> if you do not pull images from docker instead just write run it will auto pull and run images 
 
+
+
+
+
+## in order to tun image
+docker run -d nginx:1.23 -> d detech program will run without blocking terminal 
 Docker run hello-world -> run the container if you run this command not stop it will create new container 
-
-
 Docker run --rm hello-world -> it will run 1 time to hello world work or not
-
-
-
 Docker run python:3.12-slim -> you can specify the image version
 Docker run python
-
-
 Docker run --rm python:3.12-slim python -c "print('Hello-world')" ->pull the image first after print hello world then remove container 
+Docker run ngnix:1.23  name and tag you have to write
+to use it ubuntu you write below code 
+docker run -it ubuntu:latest'Image name' bash 
 
 Docker image ls -> this will show what images you installed 
 
+docker images | gerp python -> 
+ 
+
+
+docker pull nginx:1.23 -> it will get the that version of ngnix
+Docker pull hello-world -> get the image from docker 
 
 
 
+#port binding
+docker run -d -p 9000:80 nginx:1.23
+9000 local port
+80 default port do not change it if u change  it will not work
+
+
+#check the log
+docker logs 94e76d437e6a
 
 
 
@@ -31,8 +47,13 @@ docker images
 # List running containers
 docker ps
 
+# giving name
+docker run --name web-app -d -p 9000:80 nginx:1.23 # with it you can check the log and see the history with it you can start and stop it 
+
 # List all containers (including stopped)
 docker ps -a
+and 
+docker start <container_id> # it will continue where it stops
 
 # Stop a running container
 docker stop <container_id>
