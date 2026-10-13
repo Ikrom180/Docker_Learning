@@ -1,0 +1,47 @@
+Get image and run it -> it called run the container
+Docker image : Immutable Template taht defines how a container will be relized
+Docker container : running instance of an image
+
+Docker pull hello-world -> get the image from docker 
+
+Docker run hello-world -> run the container if you run this command not stop it will create new container 
+
+
+Docker run --rm hello-world -> it will run 1 time to hello world work or not
+
+
+
+Docker run python:3.12-slim -> you can specify the image version
+Docker run python
+
+
+Docker run --rm python:3.12-slim python -c "print('Hello-world')" ->pull the image first after print hello world then remove container 
+
+Docker image ls -> this will show what images you installed 
+
+
+
+
+
+
+
+# List downloaded images
+docker images
+
+# List running containers
+docker ps
+
+# List all containers (including stopped)
+docker ps -a
+
+# Stop a running container
+docker stop <container_id>
+
+# Start an existing stopped container
+docker start <container_id>
+
+# Remove a container
+docker rm <container_id>
+
+# Remove an image
+docker rmi <image_name>
