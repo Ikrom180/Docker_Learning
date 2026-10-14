@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Docker Beginner's Guide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{--sea1:#0a4d8c;--sea2:#0e8fa3;--sheet:#fbfdff;--ink:#12283d;--mute:#4b6379;--line:#d5e3ee;--tipbg:#e6f6f4;--tip:#0e8fa3;--warnbg:#fff3df;--warn:#d9822b;--codebg:#0d2236;--code:#d8ecf8;--chip:#e8f1f8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sea1:#041a30;--sea2:#07505e;--sheet:#0f2031;--ink:#e4eff8;--mute:#9db5c8;--line:#24425a;--tipbg:#0f3a40;--tip:#4fd1c5;--warnbg:#3a2a12;--warn:#f0a95a;--codebg:#07131f;--chip:#193349}}
+:root[data-theme="dark"]{--sea1:#041a30;--sea2:#07505e;--sheet:#0f2031;--ink:#e4eff8;--mute:#9db5c8;--line:#24425a;--tipbg:#0f3a40;--tip:#4fd1c5;--warnbg:#3a2a12;--warn:#f0a95a;--codebg:#07131f;--chip:#193349}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100vh;color:var(--ink);font:17px/1.65 "Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;background-color:var(--sea1);
+background-image:
+repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 70px,transparent 70px 76px),
+repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 34px,transparent 34px 40px),
+linear-gradient(160deg,var(--sea1),var(--sea2));background-attachment:fixed}
+.wrap{max-width:860px;margin:0 auto;padding:clamp(16px,4vw,48px) clamp(12px,3vw,24px) 56px}
+header{color:#fff;padding:28px 4px 30px}
+.stack{display:flex;gap:6px;margin-bottom:18px}
+.stack i{display:block;width:46px;height:26px;border-radius:3px;background:#ffb347;box-shadow:inset 0 0 0 3px rgba(0,0,0,.12),inset 8px 0 0 rgba(0,0,0,.1),inset -8px 0 0 rgba(0,0,0,.1)}
+.stack i:nth-child(2){background:#5fd3e6}.stack i:nth-child(3){background:#f2f6f9}.stack i:nth-child(4){background:#ff7a6b}
+h1{margin:0;font-size:clamp(34px,7vw,56px);line-height:1.08;font-weight:800;letter-spacing:-.02em}
+header p{margin:12px 0 0;font-size:19px;opacity:.9;max-width:34em}
+main{background:var(--sheet);border-radius:14px;padding:clamp(20px,4vw,44px);box-shadow:0 18px 50px rgba(0,0,0,.28)}
+h2{font-size:28px;line-height:1.2;margin:2.2em 0 .5em;padding-bottom:.35em;border-bottom:3px solid var(--sea2)}
+main h2:first-child{margin-top:0}
+h3{font-size:20px;margin:1.8em 0 .4em}
+h4{font-size:16px;margin:1.4em 0 .2em;font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;color:var(--sea2)}
+p{margin:.6em 0;max-width:68ch}
+code{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.86em;background:var(--chip);padding:.1em .38em;border-radius:4px}
+pre{background:var(--codebg);color:var(--code);padding:16px 18px;border-radius:8px;overflow-x:auto;margin:.9em 0;border-left:4px solid var(--sea2)}
+pre code{background:none;padding:0;color:inherit;font-size:14px;line-height:1.6}
+.tbl{overflow-x:auto;margin:1em 0}
+table{border-collapse:collapse;width:100%;font-size:15.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--chip)}
+.note{margin:1.1em 0;padding:12px 16px;border-radius:8px;border-left:5px solid var(--tip);background:var(--tipbg)}
+.note.warn{border-color:var(--warn);background:var(--warnbg)}
+.note p{margin:0}
+ul{padding-left:1.3em}
+li{margin:.25em 0}
+a{color:var(--sea2)}
+footer{color:#fff;text-align:center;padding:26px 8px 0;opacity:.9}
+@media (max-width:520px){body{font-size:16px}h2{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="stack"><i></i><i></i><i></i><i></i></div>
+<h1>Docker Beginner's Guide</h1>
+<p>A friendly, hands-on introduction to images, containers, ports, and Dockerfiles.</p>
+</header>
+<main>
+
+<h2>1. Core Concepts</h2>
+<p>Two words show up everywhere in Docker. Learn these first and the rest gets easier.</p>
+<div class="tbl"><table>
+<tr><th>Term</th><th>What it is</th><th>Analogy</th></tr>
+<tr><td><b>Docker image</b></td><td>A read-only (<b>immutable</b>) template that describes what a container contains.</td><td>A recipe</td></tr>
+<tr><td><b>Docker container</b></td><td>A <b>running instance</b> of an image.</td><td>The meal cooked from the recipe</td></tr>
+</table></div>
+<p>The basic workflow: <b>get an image, then run it.</b> Running an image creates a container.</p>
+<div class="note"><p><b>Tip:</b> You can create many containers from one image, just like cooking the same recipe many times.</p></div>
+
+<h2>2. Getting Images</h2>
+<h3>Pulling an image</h3>
+<pre><code># Download a specific version of nginx
+docker pull nginx:1.23
+
+# Download the hello-world test image
+docker pull hello-world</code></pre>
+<h3>Names and tags</h3>
+<p>An image is written as <code>name:tag</code>, where the <b>tag</b> is the version, for example <code>nginx:1.23</code> or <code>python:3.12-slim</code>.</p>
+<div class="note"><p><b>Tip:</b> With no tag, Docker uses <code>latest</code>. Specify a version for predictable results.</p></div>
+<h3>Auto-pull</h3>
+<p>You don't have to pull first. If the image isn't on your computer, <code>docker run nginx</code> <b>downloads it automatically</b> and then runs it.</p>
+<h3>Listing your images</h3>
+<pre><code>docker images              # all downloaded images
+docker image ls            # same, newer-style command
+docker images | grep python   # filter the list</code></pre>
+
+<h2>3. Running Containers</h2>
+<p><code>docker run</code> creates and starts a container from an image.</p>
+<pre><code># Run in the background (detached)
+docker run -d nginx:1.23
+
+# Run once and remove the container afterwards
+docker run --rm hello-world
+
+# Run a specific version
+docker run python:3.12-slim
+
+# Run one command, then clean up
+docker run --rm python:3.12-slim python -c "print('Hello-world')"
+
+# Open a shell inside Ubuntu (type exit to leave)
+docker run -it ubuntu:latest bash</code></pre>
+<h3>Useful options</h3>
+<div class="tbl"><table>
+<tr><th>Option</th><th>What it does</th></tr>
+<tr><td><code>-d</code></td><td><b>Detached mode.</b> Runs in the background so your terminal stays free.</td></tr>
+<tr><td><code>--rm</code></td><td><b>Auto-remove.</b> Deletes the container when it stops. Great for quick tests.</td></tr>
+<tr><td><code>-it</code></td><td><b>Interactive terminal.</b> Lets you type commands inside the container.</td></tr>
+<tr><td><code>-p host:container</code></td><td><b>Port binding.</b> Connects a port on your computer to one in the container.</td></tr>
+<tr><td><code>--name &lt;name&gt;</code></td><td><b>Custom name</b> instead of a random one.</td></tr>
+</table></div>
+<div class="note warn"><p><b>Heads-up:</b> Each <code>docker run hello-world</code> without <code>--rm</code> creates a <b>brand-new container</b>. Old ones stay on your system, stopped, until you remove them.</p></div>
+
+<h2>4. Port Binding</h2>
+<p>Containers are isolated by default. To open a web server inside one from your browser, <b>bind a port</b>.</p>
+<pre><code>docker run -d -p 9000:80 nginx:1.23</code></pre>
+<div class="tbl"><table>
+<tr><th>Part</th><th>Meaning</th></tr>
+<tr><td><code>9000</code></td><td>Port on <b>your computer</b>. Pick any free port.</td></tr>
+<tr><td><code>80</code></td><td>Port <b>inside the container</b> where nginx listens.</td></tr>
+</table></div>
+<p>Now open <code>http://localhost:9000</code> in your browser.</p>
+<div class="note warn"><p><b>Important:</b> The container port must match the port the app really listens on. nginx uses 80, so changing it breaks the connection. Only the host port is yours to choose.</p></div>
+
+<h2>5. Managing Containers</h2>
+<pre><code>docker ps          # running containers
+docker ps -a       # all containers, including stopped
+
+# Give a container a name
+docker run --name web-app -d -p 9000:80 nginx:1.23
+
+# Read the logs (by ID or name)
+docker logs 94e76d437e6a
+docker logs web-app
+
+docker stop &lt;container&gt;    # stop
+docker start &lt;container&gt;   # resume where it left off
+docker rm &lt;container&gt;      # remove a container
+docker rmi &lt;image&gt;         # remove an image</code></pre>
+<div class="note"><p><b>Tip:</b> Use the container <b>ID or name</b>. You only need the first few characters of an ID if they're unique.</p></div>
+<div class="note warn"><p><b>Warning:</b> You can't remove a running container, or an image a container is using. Stop and remove the container first.</p></div>
+
+<h2>6. Building Your Own Image</h2>
+<p>A <b>Dockerfile</b> is a text file of step-by-step instructions for building an image.</p>
+<div class="note"><p><b>Rule:</b> Every Dockerfile must begin with <code>FROM</code>.</p></div>
+<pre><code>FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY requirements.txt /app/
+COPY src /app/
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+EXPOSE 3000
+
+CMD ["python", "server.py"]</code></pre>
+<pre><code>docker build -t python-app:1.0 .</code></pre>
+<ul>
+<li><code>-t python-app:1.0</code> sets the image <b>name and tag</b>.</li>
+<li>The final <code>.</code> means "use the current folder as the build context".</li>
+</ul>
+<div class="note"><p><b>Tip:</b> Images don't update themselves. After changing code, run <code>docker build</code> again, ideally with a new tag like <code>1.1</code>.</p></div>
+
+<h3>What each instruction does</h3>
+<h4>FROM python:3.12-slim</h4>
+<p>Sets the <b>base image</b>. Docker downloads it from Docker Hub if it isn't already on your computer.</p>
+<h4>WORKDIR /app</h4>
+<p>Sets the <b>working directory</b> inside the image. Later steps run from here. Docker creates it if needed.</p>
+<h4>COPY requirements.txt /app/</h4>
+<p>Copies a file from your computer into the image, in the form <code>COPY &lt;source&gt; &lt;destination&gt;</code>.</p>
+<ul>
+<li>The source is relative to the <b>build context</b> (usually the Dockerfile's folder), not your whole computer.</li>
+<li>The destination is a folder inside the image, so the file lands at <code>/app/requirements.txt</code>.</li>
+</ul>
+<h4>COPY src /app/</h4>
+<p>Copies the contents of your <code>src</code> folder, subfolders included, into <code>/app/</code>. A <code>src/server.py</code> becomes <code>/app/server.py</code>.</p>
+<h4>RUN pip install --no-cache-dir -r requirements.txt</h4>
+<p>Installs your Python dependencies. <code>--no-cache-dir</code> keeps the image smaller.</p>
+<h4>EXPOSE 3000</h4>
+<p>Documents that the app listens on port <b>3000</b>.</p>
+<div class="note"><p><b>Note:</b> <code>EXPOSE</code> is mostly documentation. To reach the app you still need <code>-p</code>, for example <code>docker run -p 3000:3000 python-app:1.0</code>.</p></div>
+<h4>CMD ["python", "server.py"]</h4>
+<p>The command that runs <b>when the container starts</b>.</p>
+
+<h3>RUN vs CMD</h3>
+<div class="tbl"><table>
+<tr><th>Instruction</th><th>When it runs</th><th>Typical use</th></tr>
+<tr><td><code>RUN</code></td><td>At <b>build time</b>, while the image is created</td><td>Installing dependencies</td></tr>
+<tr><td><code>CMD</code></td><td>At <b>container startup</b></td><td>Launching your app</td></tr>
+</table></div>
+
+<h2>7. Putting It All Together</h2>
+<pre><code>docker build -t python-app:1.0 .
+docker run --name my-app -d -p 3000:3000 python-app:1.0
+docker ps
+docker logs my-app
+docker stop my-app
+docker rm my-app</code></pre>
+<p>You've covered the essentials: pulling images, running containers, binding ports, managing containers, and building your own image. Keep experimenting, because practice is the fastest way to make Docker feel natural.</p>
+
+</main>
+<footer>Happy shipping 🐳</footer>
+</div>
+</body>
+</html>
