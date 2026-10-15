@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User Profile</title>
+  <style>
+    body { font-family: Times New Roman, serif; margin: 30px; max-width: 760px; }
+    img { width: 400px; max-width: 100%; display: block; }
+    .row { padding: 20px 0; border-bottom: 1px solid #999; }
+    .row b { font-size: 1.2em; }
+    input { font-size: 1em; padding: 6px; }
+    button { font-size: 1em; padding: 14px 40px; margin-top: 25px;
+             background: #fff; border: 1px solid #aaa; border-radius: 8px; cursor: pointer; }
+    .edit { display: none; }
+  </style>
+</head>
+<body>
+  <h1>User Profile</h1>
+
+  <img src="/images/profile.jpg" alt="Profile picture">
+
+  <!-- View mode -->
+  <div id="view-mode">
+    <div class="row">Name: <b id="name">-</b></div>
+    <div class="row">Email: <b id="email">-</b></div>
+    <div class="row">Interests: <b id="interests">-</b></div>
+    <button onclick="showEdit()">Edit Profile</button>
+  </div>
+
+  <!-- Edit mode -->
+  <div id="edit-mode" class="edit">
+    <div class="row">Name: <input type="text" id="input-name"></div>
+    <div class="row">Email: <input type="text" id="input-email"></div>
+    <div class="row">Interests: <input type="text" id="input-interests"></div>
+    <button onclick="saveProfile()">Save Profile</button>
+  </div>
+
+  <script>
+    function setText(data) {
+      document.getElementById("name").textContent = data.name || "-";
+      document.getElementById("email").textContent = data.email || "-";
+      document.getElementById("interests").textContent = data.interests || "-";
+    }
+
+    function showEdit() {
+      document.getElementById("input-name").value = document.getElementById("name").textContent;
+      document.getElementById("input-email").value = document.getElementById("email").textContent;
+      document.getElementById("input-interests").value = document.getElementById("interests").textContent;
+      document.getElementById("view-mode").style.display = "none";
+      document.getElementById("edit-mode").style.display = "block";
+    }
+
+    async function saveProfile() {
+      const payload = {
+        name: document.getElementById("input-name").value,
+        email: document.getElementById("input-email").value,
+        interests: document.getElementById("input-interests").value,
+      };
+
+      const response = await fetch("/update-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      setText(await response.json());
+
+      document.getElementById("edit-mode").style.display = "none";
+      document.getElementById("view-mode").style.display = "block";
+    }
+
+    // Load the profile when the page opens
+    fetch("/get-profile")
+      .then((res) => res.json())
+      .then(setText);
+  </script>
+</body>
+</html>
