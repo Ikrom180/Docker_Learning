@@ -7,6 +7,8 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin -d mydb"]
       interval: 3s
@@ -28,3 +30,7 @@ services:
     depends_on:
       postgresdb:
         condition: service_healthy
+
+  volumes:
+    pgdata:
+      driver: local
